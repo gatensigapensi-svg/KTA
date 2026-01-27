@@ -4,7 +4,7 @@ on:
   push:
     branches: [ master ]
   schedule:
-    - cron: "*/10 * * * *"   # auto sync tiap hari jam 2 pagi
+    - cron: "*/10 * * * *" 
   workflow_dispatch:
 
 jobs:
