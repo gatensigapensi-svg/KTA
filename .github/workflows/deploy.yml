@@ -37,6 +37,11 @@ jobs:
             echo "changed=true" >> $GITHUB_OUTPUT
           fi
 
+      - name: Set Git identity
+        run: |
+          git config --global user.name "gatensigapensi-svg"
+          git config --global user.email "gatensigapensi@gmail.com"
+
       - name: Merge upstream
         if: steps.diff.outputs.changed == 'true'
         run: |
