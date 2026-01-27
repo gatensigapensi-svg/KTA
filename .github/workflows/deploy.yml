@@ -25,13 +25,13 @@ jobs:
       - name: Check for changes
         id: diff
         run: |
-          LOCAL=$(git rev-parse master)
-          UPSTREAM=$(git rev-parse upstream/master)
+          git fetch upstream
 
-          echo "local=$LOCAL"
-          echo "upstream=$UPSTREAM"
-
-          if [ "$LOCAL" = "$UPSTREAM" ]; then
+          NEW=$(git rev-list master..upstream/master --count)
+      
+          echo "new=$NEW"
+      
+          if [ "$NEW" -eq 0 ]; then
             echo "changed=false" >> $GITHUB_OUTPUT
           else
             echo "changed=true" >> $GITHUB_OUTPUT
