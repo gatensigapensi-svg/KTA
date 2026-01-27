@@ -1,0 +1,64 @@
+name: E-KTA Deploy
+
+on:
+  push:
+    branches: [ master ]
+  schedule:
+    - cron: "*/10 * * * *"   # auto sync tiap hari jam 2 pagi
+  workflow_dispatch:
+
+jobs:
+
+# -------- SYNC UPSTREAM --------
+
+  sync:
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Add upstream
+        run: |
+          git remote add upstream https://github.com/alvinsdrive2-stack/KTA.git || true
+          git fetch upstream
+          git checkout master
+          git merge upstream/master --no-edit
+
+      - name: Push sync branch
+        run: |
+          git push origin master --force
+
+# -------- BUILD & DEPLOY --------
+
+  build-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Next.js
+        run: npm run build
+
+      - name: Deploy to server
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan ${{ secrets.DEPLOY_HOST }} >> ~/.ssh/known_hosts
+
+          rsync -avz --delete \
+            --exclude=".git" \
+            $GITHUB_WORKSPACE/ \
+            ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:${{ secrets.DEPLOY_PATH }}
+
+          ssh ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} << 'EOF'
+            cd $DEPLOY_PATH
+            pm2 reload ecosystem.config.js || pm2 start ecosystem.config.js
+          EOF
