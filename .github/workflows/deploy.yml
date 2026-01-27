@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 env:
-  DATABASE_URL="mysql://gatensi:GatensiDB%40%24%23%212025@localhost:3306/gatensi_kta"
+  DATABASE_URL="mysql://gatensi:GatensiDB%40%24%23%212025@103.226.138.210:3306/gatensi_kta"
   MIDTRANS_CLIENT_KEY="Mid-client-1Dtlrk1yjQXT-wHW"
   MIDTRANS_ENVIRONMENT="sandbox"
   MIDTRANS_MERCHANT_ID="G355561914"
