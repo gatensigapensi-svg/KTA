@@ -38,9 +38,6 @@ jobs:
 
       - uses: actions/setup-node@v4
       
-      - name: Build Next.js
-        run: npm run build
-
       - name: Deploy to server
         run: |
           mkdir -p ~/.ssh
