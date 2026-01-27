@@ -46,7 +46,7 @@ jobs:
         if: steps.diff.outputs.changed == 'true'
         run: |
           git checkout master
-          git add .github/workflows/deploy.yaml
+          git add .
           git commit -m "Update workflow"
           git merge upstream/master --allow-unrelated-histories --no-edit
           git push origin master
