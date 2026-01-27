@@ -45,7 +45,7 @@ jobs:
           chmod 600 ~/.ssh/id_ed25519
           ssh-keyscan -p ${{ secrets.DEPLOY_PORT }} ${{ secrets.DEPLOY_HOST }} >> ~/.ssh/known_hosts
 
-          rsync -avz --delete \
+          rsync -avz -e "ssh -p ${{ secrets.DEPLOY_PORT }}" \
             --exclude=".git" \
             $GITHUB_WORKSPACE/ \
             ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:${{ secrets.DEPLOY_PATH }}
