@@ -58,5 +58,5 @@ jobs:
 
           ssh ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} << 'EOF'
             cd $DEPLOY_PATH
-            pm2 reload ecosystem.config.js || pm2 start ecosystem.config.js
+            pm2 restart ekta-dummy
           EOF
