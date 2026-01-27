@@ -9,35 +9,43 @@ on:
   
 jobs:
 
-# -------- SYNC UPSTREAM --------
-
-  sync:
-    if: contains(fromJson('["schedule","workflow_dispatch"]'), github.event_name)
+  sync-and-deploy:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Add upstream
         run: |
           git remote add upstream https://github.com/alvinsdrive2-stack/KTA.git || true
           git fetch upstream
+
+      - name: Check for changes
+        id: diff
+        run: |
+          LOCAL=$(git rev-parse master)
+          UPSTREAM=$(git rev-parse upstream/master)
+
+          echo "local=$LOCAL"
+          echo "upstream=$UPSTREAM"
+
+          if [ "$LOCAL" = "$UPSTREAM" ]; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Merge upstream
+        if: steps.diff.outputs.changed == 'true'
+        run: |
           git checkout master
           git merge upstream/master --allow-unrelated-histories --no-edit
-      - name: Push sync branch
-        run: |
-          git push origin master --force
+          git push origin master
 
-# -------- BUILD & DEPLOY --------
-
-  build-deploy:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-      
       - name: Deploy to server
+        if: steps.diff.outputs.changed == 'true'
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
