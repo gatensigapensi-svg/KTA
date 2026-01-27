@@ -22,8 +22,7 @@ jobs:
           git remote add upstream https://github.com/alvinsdrive2-stack/KTA.git || true
           git fetch upstream
           git checkout master
-          git merge upstream/master --no-edit
-
+          git merge upstream/master --allow-unrelated-histories --no-edit
       - name: Push sync branch
         run: |
           git push origin master --force
