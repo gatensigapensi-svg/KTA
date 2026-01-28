@@ -49,7 +49,10 @@ jobs:
         if: steps.diff.outputs.changed == 'true'
         run: |
           git checkout master
-          git merge upstream/master --allow-unrelated-histories --no-edit -- . ":(exclude).github/workflows"
+          git merge upstream/master --allow-unrelated-histories --no-edit || true
+          git checkout --ours .github/workflows || true
+          git add .github/workflows
+          git commit -m "Keep local workflows"
           git push origin master
 
       - name: Deploy to server
