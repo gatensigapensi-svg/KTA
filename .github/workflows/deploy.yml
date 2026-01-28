@@ -49,7 +49,7 @@ jobs:
         if: steps.diff.outputs.changed == 'true'
         run: |
           git checkout master
-          git merge upstream/master --allow-unrelated-histories --no-edit -- . ':!.github/workflows'
+          git merge upstream/master --allow-unrelated-histories --no-edit -- . ":(exclude).github/workflows"
           git push origin master
 
       - name: Deploy to server
