@@ -50,10 +50,19 @@ jobs:
         run: |
           git checkout master
           git merge upstream/master --allow-unrelated-histories --no-edit || true
-          git checkout --ours .github/workflows || true
-          git add .github/workflows
-          git commit -m "Keep local workflows"
-          git push origin master
+          
+          # keep local workflows (optional hardening)
+          git checkout --ours .github/workflows 2>/dev/null || true
+          git add .github/workflows || true
+          
+          # only commit if there are changes
+          if ! git diff --cached --quiet || ! git diff --quiet; then
+            git add -A
+            git commit -m "Sync upstream"
+            git push origin master
+          else
+            echo "No changes to commit"
+          fi
 
       - name: Deploy to server
         if: steps.diff.outputs.changed == 'true'
