@@ -76,4 +76,4 @@ jobs:
 
           ssh -p ${{ secrets.DEPLOY_PORT }} \
             ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} \
-            "cd ${{ secrets.DEPLOY_PATH }} && npm ci && npm run build && pm2 restart ekta-dummy"
+            "cd ${{ secrets.DEPLOY_PATH }} && npm ci && npm run build && pm2 restart ekta"
